@@ -1,5 +1,8 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { InactiveAccountError, InvalidEmailPasswordError } from "./utils/error";
+import { sendRequest } from "./utils/api";
+import { IUser } from "./types/next-auth";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -11,32 +14,48 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: {},
       },
       authorize: async (credentials) => {
-        console.log("kiểm tra");
-
-        let user = null;
-
-        // call backend
-        user = {
-          _id: "2323232",
-          username: "string",
-          email: "string",
-          isVerify: "boolean",
-          type: "string",
-          role: "string",
-        };
-        if (!user) {
-          // No user found, so this is their first attempt to login
-          // Optionally, this is also the place you could do a user registration
-          throw new Error("Invalid credentials.");
+        const res = await sendRequest<IBackendRes<any>>({
+          method: "POST",
+          url: "/v1/auth/signin",
+          body: {
+            email: credentials.email,
+            password: credentials.password,
+          },
+        });
+        if (res.statusCode === 201) {
+          return {
+            access_token: res.data.access_token,
+          };
+        } else if (+res.statusCode === 401) {
+          throw new InvalidEmailPasswordError();
+        } else if (+res.statusCode === 400) {
+          throw new InactiveAccountError();
+        } else {
+          throw new Error("Internal server error");
         }
-
-        // return user object with their profile data
-        return user;
       },
     }),
   ],
 
   pages: {
     signIn: "/auth/login",
+  },
+  callbacks: {
+    jwt({ token, user }) {
+      if (user) {
+        // User is available during sign-in
+        token.user = user as IUser;
+        token.access_token = token.access_token;
+      }
+      return token;
+    },
+    session({ session, token }) {
+      (session.user as IUser) = token.user;
+      session.access_token = token.access_token;
+      return session;
+    },
+    authorized: async ({ auth }) => {
+      return !!auth;
+    },
   },
 });

@@ -1,29 +1,34 @@
 "use client";
+import React from "react";
 import { Button, Col, Divider, Form, Input, notification, Row } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
-import { authenticate } from "@/utils/actions";
+import { sendRequest } from "@/utils/api";
 import { useRouter } from "next/navigation";
 
-const Login = () => {
+const Verify = (props: any) => {
+  const { id } = props;
   const router = useRouter();
+  const onFinish = async (values: any) => {
+    const { _id, code } = values;
+    const res = await sendRequest<IBackendRes<any>>({
+      method: "POST",
+      url: "/v1/auth/checkCodeVerify",
+      body: {
+        _id,
+        code,
+      },
+    });
 
-  const onFinish = async (formData: any) => {
-    const { email, password } = formData;
-
-    const response = await authenticate(email, password);
-    if (response.error) {
-      notification.error({
-        message: "Login error!",
-        description: response.error,
+    if (+res?.statusCode === 201) {
+      notification.success({
+        message: "Kích hoạt tài khoản thành công!",
       });
-      if (response.code === 401) {
-        // statusCode;
-        router.push("/verify/2321321");
-      }
+      router.push(`/auth/login`);
     } else {
-      router.push("/dashboard");
+      notification.error({
+        message: res.message,
+      });
     }
   };
 
@@ -38,42 +43,38 @@ const Login = () => {
             borderRadius: "5px",
           }}
         >
-          <legend>Đăng Nhập</legend>
+          <legend>Kích hoạt tài khoản {id}</legend>
+
           <Form
             name="basic"
             onFinish={onFinish}
             autoComplete="off"
             layout="vertical"
           >
-            <Form.Item
-              label="Email"
-              name="email"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your email!",
-                },
-              ]}
-            >
-              <Input autoComplete="true" />
+            <Form.Item hidden label="ID" name="_id" initialValue={id}>
+              <Input />
             </Form.Item>
-
+            <h1 className="text-2xl folt-bold">
+              Điền mã code được gửi đến email để kích hoạt tài khoản.
+            </h1>
+            <br />
+            <br />
             <Form.Item
-              label="Password"
-              name="password"
+              label="Verify code"
+              name="code"
               rules={[
                 {
                   required: true,
-                  message: "Please input your password!",
+                  message: "Please input your code!",
                 },
               ]}
             >
-              <Input.Password autoComplete="true" />
+              <Input />
             </Form.Item>
 
             <Form.Item>
               <Button type="primary" htmlType="submit">
-                Login
+                Submit
               </Button>
             </Form.Item>
           </Form>
@@ -82,8 +83,8 @@ const Login = () => {
           </Link>
           <Divider />
           <div style={{ textAlign: "center" }}>
-            Chưa có tài khoản?{" "}
-            <Link href={"/auth/register"}>Đăng ký tại đây</Link>
+            Quay lại trang đăng nhập?{" "}
+            <Link href={"/auth/login"}>Đăng nhập</Link>
           </div>
         </fieldset>
       </Col>
@@ -91,4 +92,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Verify;
