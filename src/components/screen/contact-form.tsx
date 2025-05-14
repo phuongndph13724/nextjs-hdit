@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import {
@@ -60,9 +61,11 @@ export function ContactForm() {
                 <IconButton variant="text" color="white">
                   <i className="fa-brands fa-facebook text-lg" />
                 </IconButton>
+                {/* @ts-ignore */}
                 <IconButton variant="text" color="white">
                   <i className="fa-brands fa-instagram text-lg" />
                 </IconButton>
+                {/* @ts-ignore */}
                 <IconButton variant="text" color="white">
                   <i className="fa-brands fa-github text-lg" />
                 </IconButton>

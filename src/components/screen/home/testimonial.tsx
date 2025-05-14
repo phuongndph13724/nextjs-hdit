@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import React from "react";
@@ -12,12 +13,12 @@ export function Testimonial() {
       <div className="container max-w-screen-lg mx-auto">
         <div className="container mx-auto mb-20 text-center">
           <h2 className="block antialiased tracking-normal font-sans text-4xl font-semibold leading-[1.3] text-blue-gray-900 mb-4">
-            What Clients Say
+            Thông Tin Liên Hệ
           </h2>
-          <p className="block antialiased font-sans text-xl leading-relaxed text-inherit mx-auto w-full px-4 font-normal !text-gray-500 lg:w-8/12">
+          {/* <p className="block antialiased font-sans text-xl leading-relaxed text-inherit mx-auto w-full px-4 font-normal !text-gray-500 lg:w-8/12">
             Discover what clients have to say about their experiences working
             with me. My client&apos;s satisfaction is my greatest achievement!
-          </p>
+          </p> */}
         </div>
         <Card color="transparent" shadow={false} className="py-8 lg:flex-row">
           <CardBody className="w-full lg:gap-10 h-full lg:!flex justify-between ">
