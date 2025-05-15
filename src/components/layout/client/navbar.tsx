@@ -20,19 +20,22 @@ const NAV_MENU = [
   {
     name: "Toyota",
     icon: RectangleStackIcon,
+    href: "/toyota",
   },
   {
     name: "Dịch vụ",
     icon: UserCircleIcon,
+    href: "/service",
   },
   {
     name: "Giới thiệu",
     icon: CommandLineIcon,
-    href: "https://www.material-tailwind.com/docs/react/installation",
+    href: "/intro",
   },
   {
     name: "Liên hệ",
     icon: UserCircleIcon,
+    href: "/contact",
   },
 ];
 
@@ -45,9 +48,8 @@ function NavItem({ children, href }: NavItemProps) {
   return (
     <li>
       <Link
-        as="a"
         href={href || "#"}
-        target={href ? "_blank" : "_self"}
+        target={href ? "_self" : "_blank"}
         color="gray"
         className="antialiased font-sans text-base leading-relaxed flex items-center gap-2 font-medium text-gray-900"
       >
@@ -72,9 +74,12 @@ export function Navbar() {
   return (
     <nav className="block py-4 backdrop-saturate-200 backdrop-blur-2xl bg-opacity-80 border-white/80 w-full max-w-full rounded-none px-4 bg-white text-white border-0 sticky top-0 z-50">
       <div className="container mx-auto flex items-center justify-between">
-        <p className="block antialiased font-sans text-black text-lg font-bold">
+        <Link
+          href={"/"}
+          className="block antialiased font-sans text-black text-lg font-bold"
+        >
           Bùi Đình Tuấn Anh
-        </p>
+        </Link>
         <ul className="ml-10 hidden items-center gap-8 lg:flex">
           {NAV_MENU.map(({ name, icon: Icon, href }) => (
             <NavItem key={name} href={href}>
