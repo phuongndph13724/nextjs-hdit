@@ -5,6 +5,10 @@ import { AntdRegistry } from "@ant-design/nextjs-registry";
 import "@/app/globals.css";
 import NextAuthWrapper from "@/library/next.auth.wrapper";
 import Layout from "@/components/layout/client/layout";
+import { ModalProvider } from "@/context/QuickViewModalContext";
+import { ReduxProvider } from "@/redux/provider";
+import { PreviewSliderProvider } from "@/context/PreviewSliderContext";
+import QuickViewModal from "@/components/screen/toyota/quick-view-modal.comp";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,11 +39,20 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/favicon.png" type="image/png" />
       </head>
       <body className={roboto.className}>
-        <Layout>
-          <AntdRegistry>
-            <NextAuthWrapper>{children}</NextAuthWrapper>
-          </AntdRegistry>
-        </Layout>
+        <ReduxProvider>
+          <ModalProvider>
+            <PreviewSliderProvider>
+              <Layout>
+                <AntdRegistry>
+                  <NextAuthWrapper>
+                    {children}
+                    <QuickViewModal />
+                  </NextAuthWrapper>
+                </AntdRegistry>
+              </Layout>
+            </PreviewSliderProvider>
+          </ModalProvider>
+        </ReduxProvider>
       </body>
     </html>
   );
